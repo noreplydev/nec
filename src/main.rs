@@ -66,16 +66,17 @@ fn search_ips(network_prefix: &[String], subnet: &Vec<String>) {
 }
 
 fn alive_ip(ip: &str) -> bool {
-    let ip = ip.parse::<IpAddr>().unwrap();
+    let ip = IpAddr::V4(Ipv4Addr::new(192, 168, 0, 13));
     let ping = icmp::IcmpSocket::connect(ip);
-    let mut ping = ping.unwrap();
 
-    let payload: &[u8] = &[1, 2];
-
-    let result = ping.send(payload);
-
-    match result.ok() {
-        Some(_) => true,
-        None => false,
+    match ping {
+        Err(err) => {
+            println!("{} is not alive: {}", ip, err);
+            return false;
+        }
+        _ => {
+            println!("{} is alive", ip);
+            return true;
+        }
     }
 }
