@@ -1,5 +1,4 @@
-use icmp;
-use std::net::{IpAddr, Ipv4Addr};
+use std::process::Command;
 use std::{env::args, process::exit};
 
 fn main() {
@@ -66,17 +65,16 @@ fn search_ips(network_prefix: &[String], subnet: &Vec<String>) {
 }
 
 fn alive_ip(ip: &str) -> bool {
-    let ip = IpAddr::V4(Ipv4Addr::new(192, 168, 0, 13));
-    let ping = icmp::IcmpSocket::connect(ip);
+    let output = Command::new("ping")
+        .arg("-c")
+        .arg("1") // Send 1 packet
+        .arg("-W")
+        .arg("1") // Timeout in seconds
+        .arg(&ip)
+        .output()
+        .expect("Failed to execute ping command");
 
-    match ping {
-        Err(err) => {
-            println!("{} is not alive: {}", ip, err);
-            return false;
-        }
-        _ => {
-            println!("{} is alive", ip);
-            return true;
-        }
-    }
+    println!("{}: {}", ip, output.status.success());
+
+    output.status.success()
 }
