@@ -1,5 +1,7 @@
+use std::io;
+use std::io::Write;
 use std::process::Command;
-use std::{env::args, process::exit};
+use std::{env::args, process::exit}; // <--- bring flush() into scope
 
 fn main() {
     let args: Vec<String> = args().collect();
@@ -31,14 +33,14 @@ fn main() {
 fn search_ips(network_prefix: &[String], subnet: &Vec<String>) {
     let mut ips: Vec<String> = Vec::new();
 
-    for i in 1..255 {
+    for i in 1..256 {
         let mut current_subnet = subnet.clone();
         current_subnet[0] = i.to_string();
         if subnet.len() > 1 {
-            for i in 1..255 {
+            for i in 1..256 {
                 current_subnet[1] = i.to_string();
                 if subnet.len() > 2 {
-                    for i in 1..255 {
+                    for i in 1..256 {
                         current_subnet[2] = i.to_string();
                         // check if the ip is valid
                         let ip =
@@ -60,11 +62,20 @@ fn search_ips(network_prefix: &[String], subnet: &Vec<String>) {
         if alive_ip(&ip) {
             ips.push(ip);
         }
+
+        if i == 255 {
+            println!("\r\nFound {} ips", ips.len());
+            io::stdout().flush().unwrap();
+        }
     }
-    println!("Alive ips: {:?}", ips);
+
+    // here are the ips that are alive
 }
 
 fn alive_ip(ip: &str) -> bool {
+    print!("\r{}: Tracing", ip);
+    io::stdout().flush().unwrap();
+
     let output = Command::new("ping")
         .arg("-c")
         .arg("1") // Send 1 packet
@@ -74,7 +85,9 @@ fn alive_ip(ip: &str) -> bool {
         .output()
         .expect("Failed to execute ping command");
 
-    println!("{}: {}", ip, output.status.success());
-
+    if output.status.success() {
+        print!("\r{}: UP       \n", ip);
+        io::stdout().flush().unwrap()
+    }
     output.status.success()
 }
