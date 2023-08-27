@@ -29,7 +29,6 @@ fn main() {
     };
 
     loop {
-        let mut buf = [0u8; 1600];
         match rx.next() {
             Ok(packet) => {
                 let packet = match Ipv4Packet::new(packet) {
