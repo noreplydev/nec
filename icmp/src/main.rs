@@ -1,6 +1,6 @@
-use std::process::exit;
-
 use pnet::datalink::{self, Channel};
+use pnet::packet::ipv4::Ipv4Packet;
+use std::process::exit;
 
 fn main() {
     let interfaces = pnet::datalink::interfaces();
@@ -23,7 +23,7 @@ fn main() {
             exit(1);
         }
         Err(e) => {
-            println!("Failed creating a raw socket {}", e);
+            println!("Failed creating a raw socket. Try with sudo. {}", e);
             exit(1);
         }
     };
@@ -31,12 +31,31 @@ fn main() {
     loop {
         let mut buf = [0u8; 1600];
         match rx.next() {
-            Ok(_) => {
-                println!("Received a packet!");
+            Ok(packet) => {
+                let packet = match Ipv4Packet::new(packet) {
+                    Some(packet) => packet,
+                    None => {
+                        println!("Unknow packet.");
+                        continue;
+                    }
+                };
+
+                if packet.get_version() == 4 {
+                    handleIPv4Packet(&packet);
+                    continue;
+                }
             }
             Err(e) => {
                 println!("Failed to read: {}", e);
             }
         }
     }
+}
+
+fn handleIPv4Packet(packet: &Ipv4Packet) {
+    println!(
+        "IPv4 packet: {} -> {}",
+        packet.get_source(),
+        packet.get_destination()
+    );
 }
