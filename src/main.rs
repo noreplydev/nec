@@ -1,7 +1,7 @@
 use std::io;
 use std::io::Write;
 use std::process::Command;
-use std::{env::args, process::exit}; // <--- bring flush() into scope
+use std::{env::args, process::exit};
 
 fn main() {
     let args: Vec<String> = args().collect();
@@ -64,12 +64,10 @@ fn search_ips(network_prefix: &[String], subnet: &Vec<String>) {
         }
 
         if i == 255 {
-            println!("\r\nFound {} ips", ips.len());
+            println!("\r\nFound {} ips\n", ips.len());
             io::stdout().flush().unwrap();
         }
     }
-
-    // here are the ips that are alive
 }
 
 fn alive_ip(ip: &str) -> bool {
@@ -80,14 +78,15 @@ fn alive_ip(ip: &str) -> bool {
         .arg("-c")
         .arg("1") // Send 1 packet
         .arg("-W")
-        .arg("1") // Timeout in seconds
+        .arg("2") // Timeout in seconds
         .arg(&ip)
         .output()
         .expect("Failed to execute ping command");
 
     if output.status.success() {
-        print!("\r{}: UP       \n", ip);
+        print!("\r{}: UP            \n", ip);
         io::stdout().flush().unwrap()
     }
+
     output.status.success()
 }
