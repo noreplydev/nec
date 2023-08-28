@@ -7,8 +7,15 @@ fn main() {
     let args: Vec<String> = args().collect();
 
     if args.len() < 2 {
+        println!(" _______    ______    _______ ");
+        println!("|       \\  /      \\  /       \\");
+        println!("| ███████\\|  ██████\\|  ███████");
+        println!("| ██  | ██| ██    ██| ██");
+        println!("| ██  | ██| ████████| ██_____ ");
+        println!("| ██  | ██ \\██     \\ \\██     \\");
+        println!(" \\██   \\██  \\███████  \\███████\n");
         println!("Welcome to nec, network scanner tool");
-        exit(1);
+        exit(0);
     }
 
     let network: Vec<&str> = args[1].split("/").collect();
