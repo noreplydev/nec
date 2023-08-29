@@ -14,7 +14,7 @@ fn main() {
         println!("| ██  | ██| ████████| ██_____ ");
         println!("| ██  | ██ \\██     \\ \\██     \\");
         println!(" \\██   \\██  \\███████  \\███████\n");
-        println!("Welcome to nec, network scanner tool");
+        println!("     network scanner tool");
         exit(0);
     }
 
