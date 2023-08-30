@@ -1,12 +1,15 @@
+use dotenv::dotenv;
 use std::io;
 use std::io::Write;
 use std::process::Command;
 use std::{env::args, process::exit};
 
 fn main() {
+    dotenv().ok();
     let args: Vec<String> = args().collect();
 
     if args.len() < 2 {
+        println!("             \n");
         println!(" _______    ______    _______ ");
         println!("|       \\  /      \\  /       \\");
         println!("| ███████\\|  ██████\\|  ███████");
@@ -14,7 +17,11 @@ fn main() {
         println!("| ██  | ██| ████████| ██_____ ");
         println!("| ██  | ██ \\██     \\ \\██     \\");
         println!(" \\██   \\██  \\███████  \\███████\n");
-        println!("     network scanner tool");
+        println!(
+            " network scanner tool v{}",
+            std::env::var("NEC_VERSION").expect("NEC_VERSION Needs to ve setted as envar.")
+        );
+        println!("             \n");
         exit(0);
     }
 
