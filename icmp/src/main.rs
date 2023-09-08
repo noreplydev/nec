@@ -19,6 +19,6 @@ fn main() {
     raw_socket
         .bind(&socket2_ip)
         .expect(&format!("Failed binding to Ipv4 address {:?}", &socket2_ip));
-
-    println!("Socket: {:?}", raw_socket);
+    
+    // WE NEED TO SEND PACKETS HERE AND LISTEN FOR RESPONSE
 }
